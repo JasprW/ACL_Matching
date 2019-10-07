@@ -1,0 +1,7 @@
+*.dSYM/
+.vscode/
+client
+server
+hello*
+*test*
+*.txt
