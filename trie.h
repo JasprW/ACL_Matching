@@ -16,14 +16,15 @@ class Trie {
     int ch[MAX_NODE][SIGMA_SIZE];
     char alpha[MAX_NODE];
     vector<int> val[MAX_NODE];
+    int sz;
 
    public:
     bool vis[MAX_N];
     vector<int> ans;
-    int sz;
     Trie() { clear(); };
     void clear();
     int idx(char c);
+    int getSz();
     void find(const char* s, int u);
     void insert(const char* s, int v);
     void dfs(const char* s, int u);

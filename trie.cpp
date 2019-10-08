@@ -13,6 +13,10 @@ void Trie::clear() {
     memset(ch[0], 0, sizeof(ch[0]));
 }
 
+int Trie::getSz() {
+    return sz;
+}
+
 int Trie::idx(char c) {
     if (c == '.')
         return 36;

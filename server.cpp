@@ -35,7 +35,7 @@ bool Server::InitTrie() {
         ++i;
         ++rule_num;
     }
-    // cout << trie->sz << endl;
+    // cout << trie->getSz() << endl;
     return true;
 }
 
@@ -132,9 +132,9 @@ bool Server::Match(string s) {
 }
 
 bool Server::Add(string s) {
-    int old = trie->sz;
+    int old = trie->getSz();
     trie->insert(s.c_str(), rule_num);
-    if (trie->sz > old) {
+    if (trie->getSz() > old) {
         ofstream fou(FILE_NAME, ios::out | ios::app);
         fou << s << endl;
         rule_num++;
