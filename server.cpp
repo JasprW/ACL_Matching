@@ -19,22 +19,24 @@ using namespace std;
 bool Server::InitTrie() {
     ifstream fin(FILE_NAME, ios::in);
     if (!fin) {
-        printf("配置文件不存在\n");
-    } else {
-        trie = new Trie();
-        rule_num = 0;
-        trie->clear();
-        int i = 0;
-        string line;
-        while (getline(fin, line)) {
-            trie->insert(line.c_str(), i);
-            ++i;
-            ++rule_num;
+        // printf("配置文件不存在\n");
+        ofstream fou(FILE_NAME, ios::out);
+        if (!fou) {
+            return false;
         }
-        // cout << trie->sz << endl;
-        return true;
     }
-    return false;
+    trie = new Trie();
+    rule_num = 0;
+    trie->clear();
+    int i = 0;
+    string line;
+    while (getline(fin, line)) {
+        trie->insert(line.c_str(), i);
+        ++i;
+        ++rule_num;
+    }
+    // cout << trie->sz << endl;
+    return true;
 }
 
 bool Server::InitSock() {
@@ -42,7 +44,7 @@ bool Server::InitSock() {
         printf("Create socket error: %s (errno: %d)\n", strerror(errno), errno);
         return false;
     } else {
-        InitTrie();
+        // InitTrie();
         return true;
     }
 }
@@ -194,6 +196,10 @@ void Server::CloseSocket() {
 
 int main() {
     Server serv;
+    if (serv.InitTrie() == false) {
+        cout << "未找到规则文件且无法创建" << endl;
+        return -1;
+    }
     if (serv.InitSock() == false) {
         cout << "初始化失败" << endl;
     }

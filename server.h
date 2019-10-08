@@ -20,7 +20,6 @@ class Server {
    private:
     Trie* trie;
     int rule_num;
-    // std::vector<std::string> storage;
     bool Match(std::string s);
     bool Add(std::string s);
     bool Del(std::string s);
