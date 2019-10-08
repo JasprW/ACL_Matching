@@ -6,8 +6,7 @@
 #include <iostream>
 #include <vector>
 
-bool vis[MAX_N];
-vector<int> ans;
+#define IDX_STAR 37
 
 void Trie::clear() {
     sz = 1;
@@ -53,56 +52,16 @@ void Trie::dfs(const char* s, int u) {
                 ans.push_back(tmp);
             }
         }
-        if (ch[u][37]) dfs(s, ch[u][37]);
+        if (ch[u][IDX_STAR]) dfs(s, ch[u][IDX_STAR]);
         return;
     }
     int c = idx(*s);
     if (ch[u][c])
         dfs(s + 1, ch[u][c]);
-    if (ch[u][37]) {
-        dfs(s + 1, ch[u][37]);
-        dfs(s, ch[u][37]);
+    if (ch[u][IDX_STAR]) {
+        dfs(s + 1, ch[u][IDX_STAR]);
+        dfs(s, ch[u][IDX_STAR]);
     }
     if (alpha[u] == '*')
         dfs(s + 1, u);
 }
-
-static Trie trie;
-
-bool match(string str) {
-    trie.clear();
-    ifstream fin(FILE_NAME);
-    if (!fin) {
-        cout << "文件不存在" << endl;
-        return false;
-    } else {
-        string line;
-        int i = 0;
-        while (getline(fin, line)) {
-            trie.insert(line.c_str(), i);
-            i++;
-        }
-    }
-    memset(vis, false, sizeof(vis));
-    ans.clear();
-    trie.dfs(str.c_str(), 0);
-    int size = ans.size();
-    if (size > 0) {
-        // puts("Matched!");
-        return true;
-    } else {
-        // puts("Not match");
-        return false;
-    }
-}
-
-// int main() {
-//     match("www.jaspr.me");
-//     match("www.sa.com");
-//     match("....");
-//     match("www91porncom");
-//     match(".google.com");
-//     match("192.136.11.255");
-//     match("192.168.192.191");
-//     return 0;
-// }

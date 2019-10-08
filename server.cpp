@@ -16,21 +16,33 @@ using namespace std;
 #define PORT 6666
 #define FILE_NAME "rules.txt"
 
+bool Server::InitTrie() {
+    ifstream fin(FILE_NAME, ios::in);
+    if (!fin) {
+        printf("配置文件不存在\n");
+    } else {
+        trie = new Trie();
+        rule_num = 0;
+        trie->clear();
+        int i = 0;
+        string line;
+        while (getline(fin, line)) {
+            trie->insert(line.c_str(), i);
+            ++i;
+            ++rule_num;
+        }
+        // cout << trie->sz << endl;
+        return true;
+    }
+    return false;
+}
+
 bool Server::InitSock() {
     if ((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         printf("Create socket error: %s (errno: %d)\n", strerror(errno), errno);
         return false;
     } else {
-        ifstream fin(FILE_NAME, ios::in);
-        if (!fin) {
-            printf("配置文件不存在\n");
-        } else {
-            storage.clear();
-            string line;
-            while (getline(fin, line)) {
-                storage.push_back(line);
-            }
-        }
+        InitTrie();
         return true;
     }
 }
@@ -78,7 +90,7 @@ Message Server::ProcessConnection(int type, string request) {
                 res.msg = "Matched!";
             } else {
                 res.type = 0;
-                res.msg = "Pattern Not Found!";
+                res.msg = "Pattern Not Found";
             }
             break;
         case MESSAGE_TYPE_ADD:
@@ -88,7 +100,7 @@ Message Server::ProcessConnection(int type, string request) {
                 res.msg = "Success!";
             } else {
                 res.type = 0;
-                res.msg = "Failed!";
+                res.msg = "Rule already exists";
             }
             break;
         case MESSAGE_TYPE_DEL:
@@ -106,14 +118,24 @@ Message Server::ProcessConnection(int type, string request) {
 }
 
 bool Server::Match(string s) {
-    return match(s);
+    memset(trie->vis, false, sizeof(trie->vis));
+    trie->ans.clear();
+
+    trie->dfs(s.c_str(), 0);
+    if (trie->ans.size() > 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool Server::Add(string s) {
-    if (find(storage.begin(), storage.end(), s) == storage.end()) {
-        storage.push_back(s);
+    int old = trie->sz;
+    trie->insert(s.c_str(), rule_num);
+    if (trie->sz > old) {
         ofstream fou(FILE_NAME, ios::out | ios::app);
         fou << s << endl;
+        rule_num++;
         return true;
     } else {
         return false;
@@ -121,27 +143,26 @@ bool Server::Add(string s) {
 }
 
 bool Server::Del(string s) {
-    auto it = find(storage.begin(), storage.end(), s);
-    if (it != storage.end()) {
-        storage.erase(it);
-        ifstream fin(FILE_NAME);
-        if (!fin) {
-            printf("文件不存在\n");
-            return false;
-        } else {
-            string line;
-            int line_num = 1;
-            while (getline(fin, line)) {
-                if (line == s) {
-                    break;
-                }
-                ++line_num;
-            }
-            _DelLine(line_num);
-        }
-        return true;
-    } else {
+    ifstream fin(FILE_NAME);
+    if (!fin) {
+        printf("文件不存在\n");
         return false;
+    } else {
+        string line;
+        int line_num = 1;
+        while (getline(fin, line)) {
+            if (line == s)
+                break;
+            else
+                ++line_num;
+        }
+        if (line_num <= rule_num) {
+            _DelLine(line_num);
+            InitTrie();
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 
