@@ -48,8 +48,10 @@ int main(int argc, char **argv) {
 
         if (!strcmp(sendline, "q\n") || !strcmp(sendline, "Q\n")) {
             break;
-        } else if (sendline[1] != ' ' && !(sendline[0] >= '0' && sendline[0] <= '3')) {
-            cout << "Usage: " << endl;
+        } else if (sendline[1] != ' ' || !(sendline[0] >= '0' && sendline[0] <= '3')) {
+            cout << "Usage: {ACT} {REQUEST}" << endl
+                 << "ACT: 0 Query, 1 Add, 2 Delete" << endl
+                 << "REQUEST: string" << endl;
             continue;
         } else {
             // TODO

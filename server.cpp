@@ -72,17 +72,17 @@ Message server::ProcessConnection(int type, string request) {
     Message res;
     switch (type) {
         case MESSAGE_TYPE_MATCH:
-            // TODO: 匹配
+            // 匹配
             if (Match(request)) {
                 res.type = 1;
-                res.msg = "Pattern Found!";
+                res.msg = "Matched!";
             } else {
                 res.type = 0;
                 res.msg = "Pattern Not Found!";
             }
             break;
         case MESSAGE_TYPE_ADD:
-            // TODO: 添加
+            // 添加
             if (Add(request)) {
                 res.type = 1;
                 res.msg = "Success!";
@@ -92,13 +92,13 @@ Message server::ProcessConnection(int type, string request) {
             }
             break;
         case MESSAGE_TYPE_DEL:
-            // TODO: 删除
+            // 删除
             if (Del(request)) {
                 res.type = 1;
                 res.msg = "Success!";
             } else {
                 res.type = 0;
-                res.msg = "Failed!";
+                res.msg = "Rule not found";
             }
             break;
     }
@@ -138,7 +138,6 @@ bool server::Del(string s) {
                 ++line_num;
             }
             _DelLine(line_num);
-            // cout << "Deleting #" << line_num << " line" << endl;
         }
         return true;
     } else {
@@ -153,7 +152,6 @@ void server::_DelLine(int line_num) {
     string line_data;
     while (getline(in, line_data)) {
         if (line != line_num) {
-            // file_data += "\n";
             file_data += line_data;
             file_data += "\n";
         }
@@ -220,26 +218,6 @@ int main() {
                     } else {
                         cout << "Request from #" << i << ": " << msg.type << " " << msg.msg << endl;
                         Message res = serv.ProcessConnection(msg.type, msg.msg);
-                        // Message res(9, "Request received!");
-                        // switch (msg.type) {
-                        //     case 0:
-                        //         res.type = 0;
-                        //         res.msg = "Match Request!";
-                        //         // serv.ProcessConnection()
-                        //         break;
-                        //     case 1:
-                        //         res.type = 1;
-                        //         res.msg = "Add Request!";
-                        //         break;
-                        //     case 2:
-                        //         res.type = 2;
-                        //         res.msg = "Delete Request!";
-                        //         break;
-                        //     default:
-                        //         res.type = -1;
-                        //         res.msg = "Wrong Request!!!";
-                        //         break;
-                        // }
                         send(i, (char *)&res, sizeof(Message), 0);
                         break;
                     }

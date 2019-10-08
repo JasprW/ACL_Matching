@@ -1,27 +1,31 @@
 #ifndef TRIE_H
 #define TRIE_H
 
-#define FILE_NAME "rules.txt"
 #include <string>
+#include <vector>
+
+#define FILE_NAME "rules.txt"
 using namespace std;
 
-const int N = 100002;
-const int sonNum = 28;
+const int MAXN = 1e5 + 10;
+const int maxnode = 6e5 + 10;
+const int sigma_size = 38;
 
-struct nodeIdx {
-    int index;
-    nodeIdx *link;
-    nodeIdx(int i = -1, nodeIdx *l = nullptr) : index(i), link(l) {}
+class Trie {
+   private:
+    int ch[maxnode][sigma_size];
+    char alpha[maxnode];
+    vector<int> val[maxnode];
+    int sz;
+
+   public:
+    Trie() { clear(); };
+    void clear();
+    int idx(char c);
+    void insert(const char* s, int v);
+    void dfs(const char* s, int u);
 };
 
-struct trieNode {
-    nodeIdx *pIdx;
-    int idNums;
-    trieNode *son[sonNum];
-};
-
-void insertP(char *p, int idx);
-void query(trieNode *curNode, int curIndex);
-bool match(string request);
+bool match(string s);
 
 #endif
