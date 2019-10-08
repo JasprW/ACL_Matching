@@ -132,16 +132,21 @@ bool Server::Match(string s) {
 }
 
 bool Server::Add(string s) {
-    int old = trie->getSz();
-    trie->insert(s.c_str(), rule_num);
-    if (trie->getSz() > old) {
+    ifstream fin(FILE_NAME, ios::in);
+    if (!fin) {
         ofstream fou(FILE_NAME, ios::out | ios::app);
-        fou << s << endl;
-        rule_num++;
-        return true;
-    } else {
-        return false;
     }
+    string line;
+    while (getline(fin, line)) {
+        if (line == s) {
+            return false;
+        }
+    }
+    trie->insert(s.c_str(), rule_num);
+    ofstream fou(FILE_NAME, ios::out | ios::app);
+    fou << s << endl;
+    rule_num++;
+    return true;
 }
 
 bool Server::Del(string s) {
