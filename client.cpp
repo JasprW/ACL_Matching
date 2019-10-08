@@ -49,9 +49,10 @@ int main(int argc, char **argv) {
         if (!strcmp(send_line, "q\n") || !strcmp(send_line, "Q\n")) {
             break;
         } else if (send_line[1] != ' ' || !(send_line[0] >= '0' && send_line[0] <= '3')) {
-            cout << "Usage: <ACT> <REQUEST>" << endl
+            cout << "\033[33mUsage: <ACT> <REQUEST>" << endl
                  << "ACT: 0 Query, 1 Add, 2 Delete" << endl
-                 << "REQUEST: string" << endl;
+                 << "REQUEST: string\033[0m" << endl
+                 << endl;
             continue;
         } else {
             string str = "";
@@ -70,7 +71,14 @@ int main(int argc, char **argv) {
             send(sockfd, &msg, sizeof(Message), 0);
             Message res;
             recv(sockfd, (char *)&res, sizeof(Message), 0);
-            cout << res.type << " " << res.msg << endl;
+            if (res.type) {
+                cout << "\033[32m" << res.type << " " << res.msg << "\033[0m" << endl
+                     << endl;
+                ;
+            } else {
+                cout << "\033[31m" << res.type << " " << res.msg << "\033[0m" << endl
+                     << endl;
+            }
         }
     }
     close(sockfd);
