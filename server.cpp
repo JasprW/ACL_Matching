@@ -9,6 +9,7 @@
 #include <iostream>
 #include <memory>
 #include <regex>
+#include "trie.h"
 using namespace std;
 
 #define MAXLINE 1024
@@ -105,12 +106,7 @@ Message server::ProcessConnection(int type, string request) {
 }
 
 bool server::Match(string s) {
-    for (string t : storage) {
-        if (s == t) {
-            return true;
-        }
-    }
-    return false;
+    return match(s);
 }
 
 bool server::Add(string s) {
@@ -122,21 +118,6 @@ bool server::Add(string s) {
     } else {
         return false;
     }
-    // ifstream fin(FILE_NAME, ios::in | ios::app);
-    // if (!fin) {
-    //     printf("文件不存在\n");
-    //     return false;
-    // } else {
-    //     string line;
-    //     while (getline(fin, line)) {
-    //         if (s == line) {  // TODO: 调整为查找是否有Match
-    //             return true;
-    //         }
-    //     }
-    //     ofstream fou(FILE_NAME, ios::out | ios::app);
-    //     fou << s << endl;
-    // }
-    // return true;
 }
 
 bool server::Del(string s) {
