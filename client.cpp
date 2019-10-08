@@ -17,8 +17,8 @@ using namespace std;
 
 int main(int argc, char **argv) {
     int sockfd, str_len, recv_len;
-    char recvline[MAXLINE], sendline[MAXLINE];
-    struct sockaddr_in servaddr;
+    char recvline[MAXLINE], send_line[MAXLINE];
+    struct sockaddr_in serv_addr;
     if (argc != 2) {
         printf("usage: ./client <ipaddress>\n");
         return 0;
@@ -29,41 +29,40 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    memset(&servaddr, 0, sizeof(servaddr));
-    servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(PORT);
-    if (inet_pton(AF_INET, argv[1], &servaddr.sin_addr) <= 0) {
+    memset(&serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(PORT);
+    if (inet_pton(AF_INET, argv[1], &serv_addr.sin_addr) <= 0) {
         printf("inet_pton error: %s (errno: %d)\n", strerror(errno), errno);
         return 0;
     }
 
-    if (connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
+    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         printf("connect error: %s (errno: %d)\n", strerror(errno), errno);
         return 0;
     }
 
     while (1) {
         fputs("Input message(Q for quit): ", stdout);
-        fgets(sendline, MAXLINE, stdin);
+        fgets(send_line, MAXLINE, stdin);
 
-        if (!strcmp(sendline, "q\n") || !strcmp(sendline, "Q\n")) {
+        if (!strcmp(send_line, "q\n") || !strcmp(send_line, "Q\n")) {
             break;
-        } else if (sendline[1] != ' ' || !(sendline[0] >= '0' && sendline[0] <= '3')) {
-            cout << "Usage: {ACT} {REQUEST}" << endl
+        } else if (send_line[1] != ' ' || !(send_line[0] >= '0' && send_line[0] <= '3')) {
+            cout << "Usage: <ACT> <REQUEST>" << endl
                  << "ACT: 0 Query, 1 Add, 2 Delete" << endl
                  << "REQUEST: string" << endl;
             continue;
         } else {
-            // TODO
             string str = "";
             for (int i = 2; i < MAXLINE; i++) {
-                if (sendline[i] != '\n') {
-                    str += sendline[i];
+                if (send_line[i] != '\n') {
+                    str += send_line[i];
                 } else {
                     break;
                 }
             }
-            Message msg(sendline[0] - '0', str);
+            Message msg(send_line[0] - '0', str);
             if (msg.type < 0 || msg.type > 2) {
                 cout << "Wrong Request!" << endl;
                 continue;

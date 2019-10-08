@@ -7,15 +7,15 @@
 #define FILE_NAME "rules.txt"
 using namespace std;
 
-const int MAXN = 1e5 + 10;
-const int maxnode = 6e5 + 10;
+const int MAX_N = 1e5 + 10;
+const int MAX_NODE = 6e5 + 10;
 const int sigma_size = 38;
 
 class Trie {
    private:
-    int ch[maxnode][sigma_size];
-    char alpha[maxnode];
-    vector<int> val[maxnode];
+    int ch[MAX_NODE][sigma_size];
+    char alpha[MAX_NODE];
+    vector<int> val[MAX_NODE];
     int sz;
 
    public:

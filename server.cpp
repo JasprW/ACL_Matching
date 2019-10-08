@@ -16,7 +16,7 @@ using namespace std;
 #define PORT 6666
 #define FILE_NAME "rules.txt"
 
-bool server::InitSock() {
+bool Server::InitSock() {
     if ((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         printf("Create socket error: %s (errno: %d)\n", strerror(errno), errno);
         return false;
@@ -35,7 +35,7 @@ bool server::InitSock() {
     }
 }
 
-int server::BindListen() {
+int Server::BindListen() {
     int option = 0;
     int optlen = sizeof(option);
     setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, (void *)&option, optlen);
@@ -57,7 +57,7 @@ int server::BindListen() {
     return sd;
 }
 
-int server::AcceptConnection(int sd) {
+int Server::AcceptConnection(int sd) {
     sockaddr_in clnt_addr;
     int nSize = sizeof(sockaddr_in);
     int clnt_sock = accept(sd, (sockaddr *)NULL, NULL);
@@ -68,7 +68,7 @@ int server::AcceptConnection(int sd) {
     return clnt_sock;
 }
 
-Message server::ProcessConnection(int type, string request) {
+Message Server::ProcessConnection(int type, string request) {
     Message res;
     switch (type) {
         case MESSAGE_TYPE_MATCH:
@@ -105,11 +105,11 @@ Message server::ProcessConnection(int type, string request) {
     return res;
 }
 
-bool server::Match(string s) {
+bool Server::Match(string s) {
     return match(s);
 }
 
-bool server::Add(string s) {
+bool Server::Add(string s) {
     if (find(storage.begin(), storage.end(), s) == storage.end()) {
         storage.push_back(s);
         ofstream fou(FILE_NAME, ios::out | ios::app);
@@ -120,7 +120,7 @@ bool server::Add(string s) {
     }
 }
 
-bool server::Del(string s) {
+bool Server::Del(string s) {
     auto it = find(storage.begin(), storage.end(), s);
     if (it != storage.end()) {
         storage.erase(it);
@@ -145,7 +145,7 @@ bool server::Del(string s) {
     }
 }
 
-void server::_DelLine(int line_num) {
+void Server::_DelLine(int line_num) {
     ifstream in(FILE_NAME);
     string file_data = "";
     int line = 1;
@@ -167,12 +167,12 @@ void server::_DelLine(int line_num) {
     out.close();
 }
 
-void server::CloseSocket() {
+void Server::CloseSocket() {
     close(sd);
 }
 
 int main() {
-    server serv;
+    Server serv;
     if (serv.InitSock() == false) {
         cout << "初始化失败" << endl;
     }

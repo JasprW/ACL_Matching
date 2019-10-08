@@ -5,7 +5,7 @@
 #include <vector>
 #include "Message.h"
 
-class server {
+class Server {
    public:
     int sd;
 

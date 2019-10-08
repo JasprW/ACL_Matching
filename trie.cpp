@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vector>
 
-bool vis[MAXN];
+bool vis[MAX_N];
 vector<int> ans;
 
 void Trie::clear() {
