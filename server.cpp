@@ -126,7 +126,11 @@ bool Server::add(string s) {
     }
     string line;
     while (getline(fin, line)) {
-        if (line == s) {
+        // 去除末尾不可见字符
+        if (line[line.size() - 1] == 13) {
+            line.pop_back();
+        }
+        if (line.c_str() == s.c_str()) {
             return false;
         }
     }
@@ -145,14 +149,20 @@ bool Server::del(string s) {
     } else {
         string line;
         int line_num = 1;
+        bool is_delete = false;
         while (getline(fin, line)) {
-            if (line == s)
-                break;
-            else
+            // 去除末尾不可见字符
+            if (line[line.size() - 1] == 13) {
+                line.pop_back();
+            }
+            if (line == s) {
+                _del_line(line_num);
+                is_delete = true;
+                continue;
+            } else
                 ++line_num;
         }
-        if (line_num <= rule_num) {
-            _del_line(line_num);
+        if (is_delete) {
             init_trie();
             return true;
         } else {
