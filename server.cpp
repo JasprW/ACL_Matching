@@ -8,18 +8,14 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
-#include <regex>
-#include "trie.h"
 using namespace std;
 
-#define MAXLINE 1024
 #define PORT 6666
 #define FILE_NAME "rules.txt"
 
-bool Server::InitTrie() {
+bool Server::init_trie() {
     ifstream fin(FILE_NAME, ios::in);
     if (!fin) {
-        // printf("配置文件不存在\n");
         ofstream fou(FILE_NAME, ios::out);
         if (!fou) {
             return false;
@@ -35,21 +31,19 @@ bool Server::InitTrie() {
         ++i;
         ++rule_num;
     }
-    // cout << trie->getSz() << endl;
     return true;
 }
 
-bool Server::InitSock() {
+bool Server::init_socket() {
     if ((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         printf("Create socket error: %s (errno: %d)\n", strerror(errno), errno);
         return false;
     } else {
-        // InitTrie();
         return true;
     }
 }
 
-int Server::BindListen() {
+int Server::bind_listen() {
     int option = 0;
     int optlen = sizeof(option);
     setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, (void *)&option, optlen);
@@ -71,55 +65,50 @@ int Server::BindListen() {
     return sd;
 }
 
-int Server::AcceptConnection(int sd) {
-    sockaddr_in clnt_addr;
-    int nSize = sizeof(sockaddr_in);
-    int clnt_sock = accept(sd, (sockaddr *)NULL, NULL);
-    if (clnt_sock == -1) {
-        printf("accept socket error: %s (errno: %d)\n", strerror(errno), errno);
-        return -1;
-    }
-    return clnt_sock;
-}
-
-Message Server::ProcessConnection(int type, string request) {
+Message Server::process_connection(int type, string request) {
     Message res;
     switch (type) {
         case MESSAGE_TYPE_MATCH:
             // 匹配
-            if (Match(request)) {
+            if (match(request)) {
                 res.type = 1;
-                res.msg = "Matched!";
+                // res.msg = "Matched!";
+                strcpy(res.msg, "Matched!");
             } else {
                 res.type = 0;
-                res.msg = "Pattern Not Found";
+                // res.msg = "Pattern Not Found";
+                strcpy(res.msg, "Pattern Not Found");
             }
             break;
         case MESSAGE_TYPE_ADD:
             // 添加
-            if (Add(request)) {
+            if (add(request)) {
                 res.type = 1;
-                res.msg = "Success!";
+                // res.msg = "Success!";
+                strcpy(res.msg, "Success!");
             } else {
                 res.type = 0;
-                res.msg = "Rule already exists";
+                // res.msg = "Rule already exists";
+                strcpy(res.msg, "Rule already exists");
             }
             break;
         case MESSAGE_TYPE_DEL:
             // 删除
-            if (Del(request)) {
+            if (del(request)) {
                 res.type = 1;
-                res.msg = "Success!";
+                // res.msg = "Success!";
+                strcpy(res.msg, "Success!");
             } else {
                 res.type = 0;
-                res.msg = "Rule not found";
+                // res.msg = "Rule not found";
+                strcpy(res.msg, "Rule not found");
             }
             break;
     }
     return res;
 }
 
-bool Server::Match(string s) {
+bool Server::match(string s) {
     memset(trie->vis, false, sizeof(trie->vis));
     trie->ans.clear();
 
@@ -131,7 +120,7 @@ bool Server::Match(string s) {
     }
 }
 
-bool Server::Add(string s) {
+bool Server::add(string s) {
     ifstream fin(FILE_NAME, ios::in);
     if (!fin) {
         ofstream fou(FILE_NAME, ios::out | ios::app);
@@ -149,7 +138,7 @@ bool Server::Add(string s) {
     return true;
 }
 
-bool Server::Del(string s) {
+bool Server::del(string s) {
     ifstream fin(FILE_NAME);
     if (!fin) {
         printf("文件不存在\n");
@@ -164,8 +153,8 @@ bool Server::Del(string s) {
                 ++line_num;
         }
         if (line_num <= rule_num) {
-            _DelLine(line_num);
-            InitTrie();
+            _del_line(line_num);
+            init_trie();
             return true;
         } else {
             return false;
@@ -173,7 +162,7 @@ bool Server::Del(string s) {
     }
 }
 
-void Server::_DelLine(int line_num) {
+void Server::_del_line(int line_num) {
     ifstream in(FILE_NAME);
     string file_data = "";
     int line = 1;
@@ -195,21 +184,21 @@ void Server::_DelLine(int line_num) {
     out.close();
 }
 
-void Server::CloseSocket() {
+void Server::close_socket() {
     close(sd);
 }
 
-int main() {
+int main(int argc, char **argv) {
     Server serv;
-    if (serv.InitTrie() == false) {
+    if (serv.init_trie() == false) {
         cout << "未找到规则文件且无法创建" << endl;
         return -1;
     }
-    if (serv.InitSock() == false) {
+    if (serv.init_socket() == false) {
         cout << "初始化失败" << endl;
     }
 
-    if ((serv.sd = serv.BindListen()) == -1) {
+    if ((serv.sd = serv.bind_listen()) == -1) {
         return -1;
     }
 
@@ -249,7 +238,7 @@ int main() {
                         cout << "closed client: " << i << endl;
                     } else {
                         cout << "Request from #" << i << ": " << msg.type << " " << msg.msg << endl;
-                        Message res = serv.ProcessConnection(msg.type, msg.msg);
+                        Message res = serv.process_connection(msg.type, msg.msg);
                         send(i, (char *)&res, sizeof(Message), 0);
                         break;
                     }
@@ -257,6 +246,6 @@ int main() {
             }
         }
     }
-    serv.CloseSocket();
+    serv.close_socket();
     return 0;
 }

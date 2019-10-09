@@ -24,7 +24,7 @@ class Trie {
     Trie() { clear(); };
     void clear();
     int idx(char c);
-    int getSz();
+    int get_sz();
     void find(const char* s, int u);
     void insert(const char* s, int v);
     void dfs(const char* s, int u);

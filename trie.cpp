@@ -13,7 +13,7 @@ void Trie::clear() {
     memset(ch[0], 0, sizeof(ch[0]));
 }
 
-int Trie::getSz() {
+int Trie::get_sz() {
     return sz;
 }
 

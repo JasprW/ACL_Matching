@@ -1,16 +1,16 @@
-#include <string>
+#ifndef MESSAGE_H
+#define MESSAGE_H
 
-#define MAX_PACK_SIZE 10240
-#define MAX_FILE_NAME_LENGTH 256
 #define MESSAGE_TYPE_MATCH 0
 #define MESSAGE_TYPE_ADD 1
 #define MESSAGE_TYPE_DEL 2
+#define MAX_STR 256
 
 class Message {
    public:
     int type;
-    std::string msg;
-    Message(int id = -1, std::string str = "") : type(id), msg(str){};
-    // int getType() { return type; }
-    // std::string getMsg() { return msg; }
+    char msg[MAX_STR];
+    Message(int id = -1, const char* str = "") : type(id) { strcpy(msg, str); };
 };
+
+#endif

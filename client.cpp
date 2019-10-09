@@ -63,18 +63,21 @@ int main(int argc, char **argv) {
                     break;
                 }
             }
-            Message msg(send_line[0] - '0', str);
+            Message msg(send_line[0] - '0', str.c_str());
             if (msg.type < 0 || msg.type > 2) {
-                cout << "Wrong Request!" << endl;
+                cout << "\033[31mWrong Request!\033[0m" << endl;
+                cout << "\033[33mUsage: <ACT> <REQUEST>" << endl
+                     << "ACT: 0 Query, 1 Add, 2 Delete" << endl
+                     << "REQUEST: string\033[0m" << endl
+                     << endl;
                 continue;
             }
-            send(sockfd, &msg, sizeof(Message), 0);
+            send(sockfd, (char *)&msg, sizeof(Message), 0);
             Message res;
             recv(sockfd, (char *)&res, sizeof(Message), 0);
             if (res.type) {
                 cout << "\033[32m" << res.type << " " << res.msg << "\033[0m" << endl
                      << endl;
-                ;
             } else {
                 cout << "\033[31m" << res.type << " " << res.msg << "\033[0m" << endl
                      << endl;
