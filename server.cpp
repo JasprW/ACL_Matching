@@ -11,7 +11,6 @@
 using namespace std;
 
 #define PORT 6666
-#define FILE_NAME "rules.txt"
 
 bool Server::init_trie() {
     ifstream fin(FILE_NAME, ios::in);

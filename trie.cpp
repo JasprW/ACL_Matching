@@ -6,7 +6,9 @@
 #include <iostream>
 #include <vector>
 
+#define IDX_DOT 36
 #define IDX_STAR 37
+#define IDX_SLASH 38
 
 void Trie::clear() {
     sz = 1;
@@ -19,9 +21,11 @@ int Trie::get_sz() {
 
 int Trie::idx(char c) {
     if (c == '.')
-        return 36;
+        return IDX_DOT;
     else if (c == '*')
-        return 37;
+        return IDX_STAR;
+    else if (c == '/')
+        return IDX_SLASH;
     else if (c >= 'A' && c <= 'Z')
         return c - 'A';
     else if (c >= 'a' && c <= 'z')

@@ -4,12 +4,12 @@
 #include <string>
 #include <vector>
 
-#define FILE_NAME "rules.txt"
+#define FILE_NAME "gfwlist.acl"
 using namespace std;
 
 const int MAX_N = 1e5 + 10;
 const int MAX_NODE = 6e5 + 10;
-const int SIGMA_SIZE = 38;
+const int SIGMA_SIZE = 39;
 
 class Trie {
    private:
