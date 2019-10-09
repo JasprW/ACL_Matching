@@ -1,10 +1,14 @@
 #include "server.h"
+#include <errno.h>
+#include <memory.h>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -26,6 +30,10 @@ bool Server::init_trie() {
     int i = 0;
     string line;
     while (getline(fin, line)) {
+        // 防止尾部不可见字符加入Trie
+        if (line[line.size() - 1] == '\r') {
+            line.pop_back();
+        }
         trie->insert(line.c_str(), i);
         ++i;
         ++rule_num;
@@ -69,7 +77,7 @@ Message Server::process_connection(int type, string request) {
     switch (type) {
         case MESSAGE_TYPE_MATCH:
             // 匹配
-            if (match(request)) {
+            if (query(request)) {
                 res.type = 1;
                 // res.msg = "Matched!";
                 strcpy(res.msg, "Matched!");
@@ -107,7 +115,7 @@ Message Server::process_connection(int type, string request) {
     return res;
 }
 
-bool Server::match(string s) {
+bool Server::query(string s) {
     memset(trie->vis, false, sizeof(trie->vis));
     trie->ans.clear();
 
@@ -127,17 +135,17 @@ bool Server::add(string s) {
     string line;
     while (getline(fin, line)) {
         // 去除末尾不可见字符
-        if (line[line.size() - 1] == 13) {
+        if (line[line.size() - 1] == '\r') {
             line.pop_back();
         }
-        if (line.c_str() == s.c_str()) {
+        if (line == s) {
             return false;
         }
     }
-    trie->insert(s.c_str(), rule_num);
+    trie->insert(s.c_str(), rule_num++);
     ofstream fou(FILE_NAME, ios::out | ios::app);
     fou << s << endl;
-    rule_num++;
+    // rule_num++;
     return true;
 }
 
@@ -152,7 +160,7 @@ bool Server::del(string s) {
         bool is_delete = false;
         while (getline(fin, line)) {
             // 去除末尾不可见字符
-            if (line[line.size() - 1] == 13) {
+            if (line[line.size() - 1] == '\r') {
                 line.pop_back();
             }
             if (line == s) {

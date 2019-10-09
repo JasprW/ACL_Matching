@@ -1,5 +1,5 @@
 #include <string>
-#include "Message.h"
+#include "message.h"
 #include "trie.h"
 
 class Server {
@@ -15,7 +15,7 @@ class Server {
    private:
     Trie* trie;
     int rule_num;
-    bool match(std::string s);
+    bool query(std::string s);
     bool add(std::string s);
     bool del(std::string s);
     void _del_line(int line);

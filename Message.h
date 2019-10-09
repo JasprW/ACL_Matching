@@ -10,7 +10,7 @@ class Message {
    public:
     int type;
     char msg[MAX_STR];
-    Message(int id = -1, const char* str = "") : type(id) { strcpy(msg, str); };
+    Message(int id = -1, const char* str = "");
 };
 
 #endif

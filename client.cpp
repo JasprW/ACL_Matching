@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <iostream>
-#include "Message.h"
+#include "message.h"
 
 #define MAXLINE 1024
 #define PORT 6666
@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
     }
 
     while (1) {
-        fputs("Input message(Q for quit): ", stdout);
+        fputs("Input request message(Q for quit): ", stdout);
         fgets(send_line, MAXLINE, stdin);
 
         if (!strcmp(send_line, "q\n") || !strcmp(send_line, "Q\n")) {
