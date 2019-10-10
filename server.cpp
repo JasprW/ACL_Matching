@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <cstring>
@@ -74,6 +75,12 @@ int Server::bind_listen() {
 
 Message Server::process_connection(int type, string request) {
     Message res;
+
+    struct timeval start1, end1;
+    clock_t begin, finish;
+    gettimeofday(&start1, NULL);
+    begin = clock();
+
     switch (type) {
         case MESSAGE_TYPE_MATCH:
             // 匹配
@@ -112,6 +119,11 @@ Message Server::process_connection(int type, string request) {
             }
             break;
     }
+    gettimeofday(&end1, NULL);
+    finish = clock();  //结束计时
+    double timeUse = end1.tv_sec - start1.tv_sec + (end1.tv_usec - start1.tv_usec) / 1000000.0;
+    timeUse = (double)(finish - begin) / CLOCKS_PER_SEC * 1000;
+    cout << "the time of clock is " << timeUse << " ms" << endl;
     return res;
 }
 
@@ -227,6 +239,8 @@ int main(int argc, char **argv) {
 
     FD_ZERO(&reads);
     FD_SET(serv.sd, &reads);
+
+    cout << "\033[33m======== All set. Waiting for connection ========\033[0m" << endl;
 
     while (1) {
         cpy_reads = reads;
