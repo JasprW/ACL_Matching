@@ -2,9 +2,9 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
+#include <string>
 #include <fstream>
 #include <iostream>
-#include <vector>
 
 #define IDX_DOT 36
 #define IDX_STAR 37

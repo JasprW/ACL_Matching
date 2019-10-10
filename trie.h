@@ -1,7 +1,6 @@
 #ifndef TRIE_H
 #define TRIE_H
 
-#include <string>
 #include <vector>
 
 #define FILE_NAME "gfwlist.acl"
@@ -25,11 +24,8 @@ class Trie {
     void clear();
     int idx(char c);
     int get_sz();
-    void find(const char* s, int u);
     void insert(const char* s, int v);
     void dfs(const char* s, int u);
 };
-
-bool match(string s);
 
 #endif
