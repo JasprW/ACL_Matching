@@ -123,7 +123,7 @@ Message Server::process_connection(int type, string request) {
     finish = clock();  //结束计时
     double timeUse = end1.tv_sec - start1.tv_sec + (end1.tv_usec - start1.tv_usec) / 1000000.0;
     timeUse = (double)(finish - begin) / CLOCKS_PER_SEC * 1000;
-    cout << "the time of clock is " << timeUse << " ms" << endl;
+    cout << "Done. Timing: " << timeUse << " ms" << endl;
     return res;
 }
 
